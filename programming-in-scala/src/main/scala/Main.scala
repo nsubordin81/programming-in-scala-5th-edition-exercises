@@ -2,7 +2,7 @@ import scala.collection.mutable
 import scala.collection.immutable.HashSet
 
 // Step 4
-@main def hello(args: String*): Unit = 
+@main def hello(args: String*): Unit =
   println(step12_3())
 
 // commenting other steps below because it creates a lot of main methods
@@ -11,35 +11,34 @@ def step7_1(): java.math.BigInteger =
   val big = new java.math.BigInteger("12345")
   return big
 
-def step7_2(): Array[String] = 
+def step7_2(): Array[String] =
   val greetStrings = new Array[String](3)
 
   /*
    parentheses for indexing an array
-   this is a general rule in scala 
+   this is a general rule in scala
    opposed to java arrays with special case []
-   all objects in scala have apply() and 
+   all objects in scala have apply() and
    update() methods and all that is happening
    here is greetString.update(0, "Hello")
-  */
+   */
   greetStrings(0) = "Hello"
   greetStrings(1) = ", "
   greetStrings(2) = "World!\n"
 
   // infix notation on method 'to'
   // operators like + are really methods too
-  for i <- 0 to 2 do 
-    print(greetStrings(i))
+  for i <- 0 to 2 do print(greetStrings(i))
   return greetStrings
 
-def step7_3(): Array[String]= 
+def step7_3(): Array[String] =
   val numNames = Array("zero", "one", "two")
   return numNames
 
-def step8_1(): List[Int] = 
+def step8_1(): List[Int] =
   return List(1, 2, 3)
 
-def step8_2(): List[Int] = 
+def step8_2(): List[Int] =
   val oneTwo = List(1, 2)
   val threeFour = List(3, 4)
   // concatenate two lists with ::: it is an operation on immutable lists, new list created
@@ -48,7 +47,7 @@ def step8_2(): List[Int] =
   println(threeFour)
   return oneTwoThreeFour
 
-def step8_3(): List[Int] = 
+def step8_3(): List[Int] =
   val twoThree = List(2, 3)
   // cons most common operations on lists, immutably adds an element, is an operator of the second operand
   val oneTwoThree = 1 :: twoThree
@@ -105,16 +104,20 @@ def step8_6(): List[String] =
   println("convert to string: " + concatList.mkString(" "))
   println("inverse filter: " + concatList.filterNot(s => s.length < 3))
   println("reverse the list: " + concatList.reverse)
-  println("sort  alphabetically: " + concatList.sortWith((s, t) => s.charAt(0).toLower < t.charAt(0).toLower))
+  println(
+    "sort  alphabetically: " + concatList.sortWith((s, t) =>
+      s.charAt(0).toLower < t.charAt(0).toLower
+    )
+  )
   println("get tail of list: " + concatList.tail)
   return concatList
 
-def step9_1() = 
+def step9_1() =
   val pair = (99, "Red Luftballoons")
   println("tuple value 1: " + pair(0))
   println("tuple value 2: " + pair(1))
 
-def step10_1() = 
+def step10_1() =
   // this is about mutability of data structures
   // scala calls lists different things when they are mutable vs immutable
   // arrays are mutable, lists are not
@@ -126,7 +129,7 @@ def step10_1() =
   // notice, jetset is a mutable reference, but the Set we assign to it is immutable
   var jetSet = Set("Boeing", "Airbus")
   // we can use += on a mutable reference, but scala will recognize that immutable map we are referencing
-  // doesn't have a += method and it knows to expand this expression to  
+  // doesn't have a += method and it knows to expand this expression to
   // jetSet = jetSet  + "Lear", aka give me a new immutable set with "Boeing", "Airbus", "Lear"
   // and change jetset's reference to point to it.
   jetSet += "Lear"
@@ -141,7 +144,7 @@ def step10_1() =
   val ingredients = hashSet + "Coriander"
   print("ingredients list with a hash set because we can: " + hashSet)
 
-def step10_2() = 
+def step10_2() =
   //static factory method (surprised we don't need ())
   val treasureMap = mutable.Map.empty[Int, String]
   // -> method is available for all scala objects and it makes a tuple of (lhs, rhs)
@@ -155,7 +158,7 @@ def step10_2() =
   val four = romanNumeral(4)
   print("this shoudl be IV: " + four)
 
-def step11_1(args: List[String]): Unit = 
+def step11_1(args: List[String]): Unit =
   //mutable reference
   var i = 0
   while i < args.length do
@@ -163,16 +166,15 @@ def step11_1(args: List[String]): Unit =
     // mutating the integer i points to
     i += 1
 
-def step11_2(args: List[String]): Unit = 
-  // another preview of the exciting powers of 
+def step11_2(args: List[String]): Unit =
+  // another preview of the exciting powers of
   // the for expression, which doesn't mutate the args list
   // or require a mutable index to work
-  for arg <- args do
-    println(arg)
+  for arg <- args do println(arg)
 
-def step11_3(args: List[String]): Unit = 
-  // check out how concise, list has a foreach which doesn't have side effects, 
-  // and because we are passing in a function that takes an argument, we 
+def step11_3(args: List[String]): Unit =
+  // check out how concise, list has a foreach which doesn't have side effects,
+  // and because we are passing in a function that takes an argument, we
   // don't need to bother with wrapping it with a lambda, it knows what to do with args
   // java method references were java's answer to this, but these require less syntax
   args.foreach(println)
@@ -183,53 +185,52 @@ def step11_4(args: List[String]): String =
 // important difference between foreach and map
 // foreach mutates in place in the same collection
 // map creates a new collection and transforms each element into a new element
-def step12_1(): String = 
+def step12_1(): String =
   val adjectives = List("One", "Two", "Red", "Blue")
   // since the anonymous function results in a  string, this will return List[String]
   val nouns = adjectives.map(adj => adj + " Fish")
   val result = "The Suess fishes are: " + nouns
   return result
 
-def step12_2(): String = 
+def step12_2(): String =
   // using a for expression this time
   val adjectives = List("One", "Two", "Red", "Blue")
-  val nouns = 
+  val nouns =
     // this compiles to a map call on adjectives
-    for adj <- adjectives yield
-      adj + " Fish"
+    for adj <- adjectives yield adj + " Fish"
   val result = "The Suess fishes are: " + nouns
   return result
 
 def step12_3(): String =
-  // Vector, another type that implements Map, 
-  // has the additoinal quality that all of its operations 
+  // Vector, another type that implements Map,
+  // has the additoinal quality that all of its operations
   // are constant time.
   val ques = Vector("Who", "What", "When", "Where", "Why")
-  
+
   val usingMap = ques.map(q => q.toLowerCase + "?")
-  
+
   val usingForYield =
-    for q <- ques yield
-      q.toLowerCase + "?"
+    for q <- ques yield q.toLowerCase + "?"
   val result = "the questions: " + usingForYield
   return result
 
-def step12_4(): Option[String] = 
-  val startW = ques.find(q => q.startsWith("W")) // Some(Who)
+def step12_4(): Option[String] =
+  val ques = Vector("Who", "What", "When", "Where", "Why")
+
+  val startsW = ques.find(q => q.startsWith("W")) // Some(Who)
   val hasLen4 = ques.find(q => q.length == 4) // Some(What)
   val hasLen5 = ques.find(q => q.length == 5) // Some(Where)
-  val startH = ques.find(q => q.startsWith("H")) // None
+  val startsH = ques.find(q => q.startsWith("H")) // None
 
   val upWho = startsW.map(word => word.toUpperCase) // Some(WHO)
   val noHow = for word <- startsH yield word.toUpperCase // None
 
   return noHow
 
-
 //CH2
 /*
 // Step 4 using arguments
-@main def hello(args: String*): Unit = 
+@main def hello(args: String*): Unit =
   println("hellow, " + args(0) + ", from a script!")
 
 // Step 5 - iteration
@@ -258,11 +259,4 @@ def step12_4(): Option[String] =
     for arg <- args do
         println(arg)
 
-*/
-
-
-
-
-    
-
-
+ */
