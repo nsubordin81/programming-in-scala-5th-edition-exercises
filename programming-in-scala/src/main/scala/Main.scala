@@ -260,3 +260,4 @@ def step12_4(): Option[String] =
         println(arg)
 
  */
+val msg = "I was compiled by Scala 3. :)"
