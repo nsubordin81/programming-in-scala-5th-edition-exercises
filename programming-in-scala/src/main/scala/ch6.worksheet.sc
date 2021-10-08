@@ -14,17 +14,30 @@ class Rational(n: Int, d: Int):
     // like in the add method below you have a that param which is type Rational this object wouldn't have access to it's n and d
     val numer: Int = n
     val denom: Int = d
-    override def toString = s"$n/$d"
+    override def toString = s"$numer/$denom"
     def add(that: Rational) =
         // I don't think I knew this trick, or if I did I forgot it, you scale the numerators by the other fraction's denominator and then sum them
         // this ends up having the same effect as scaling each whole fraction by the factor that you know will make the denominators into a common multiple of 
         // both prior denominators.
         Rational(numer * that.denom + that.numer * denom, denom * that.denom)
+    def lessThan(that: Rational) = 
+        this.numer * that.denom < that.numer * this.denom
+    def max(that: Rational) = 
+        // this is assumed and optional for denoting methods or fields, mandatory when it stands alone
+        if this.lessThan(that) then that else this
 
 
 
 // toString method is overwritten or this would be Rational@<somehexnumber> because that is what Object.toString would do. 
 val rational = new Rational(3, 4)
+val twoThirds = new Rational(2, 3)
+val threeFourths = new Rational(3, 4)
+val seventeenTwelves = twoThirds.add(threeFourths)
+twoThirds.lessThan(seventeenTwelves)
+twoThirds.max(threeFourths)
+
+twoThirds.numer
+
 
 
 val sum = rational.add(Rational(1, 2))
