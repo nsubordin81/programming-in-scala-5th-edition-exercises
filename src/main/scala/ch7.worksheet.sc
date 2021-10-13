@@ -17,7 +17,7 @@ def gcdLoop(x: Long, y: Long): Long =
 
 val test = gcdLoop(100, 200)
 
-var nums = 3::2::3::Nil
+// var nums = 3::2::3::Nil
 
-while
-    nums 
+// while
+//     nums
