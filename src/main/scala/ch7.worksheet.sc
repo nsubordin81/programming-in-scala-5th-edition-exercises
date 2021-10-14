@@ -47,3 +47,10 @@ val y = countDownToOne(3)
 
 val test1 = gcdLoopDoWhile(1, 1)
 val counter1 = gcdLoopDoWhile(5, 5)
+
+// this is the right way to do it, use recursion, no variable mutation, and it is more concise and easy to read. The book says challenge
+// while loops and vars they are artifacts of imperative style making it into your code.
+def gcd(x: Long, y: Long): Long =
+  if x == 0 then y else gcd(y % x, x)
+
+gcd(100, 200)
