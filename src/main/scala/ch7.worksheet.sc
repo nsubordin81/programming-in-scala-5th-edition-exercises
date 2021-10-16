@@ -54,3 +54,25 @@ def gcd(x: Long, y: Long): Long =
   if x == 0 then y else gcd(y % x, x)
 
 gcd(100, 200)
+
+// here we go, the start of the show it is the for expression
+
+val filesHere = new java.io.File(".").listFiles
+
+// this syntax is called a generator
+// write down while you are thinking of this the connection between generators and the functional paradigm
+// generators will create a new val per iteration and execute the contents of the expression on it
+// this seems connected to python generators and also Unity generator expressions for working with
+// continuations, and I suppose javascript as well. Worth understanding how these are all the same and maybe
+// how they differ across languages.
+for file <- filesHere do println(file)
+
+for i <- 1 to 10 do println(s"Iteration $i")
+
+//if you don't want to include the last number in the range
+for i <- 1 until 4 do println(s"Iteration $i")
+
+// scala doesn't use Ranges to iterate typically, so this is uncommon to see:
+for i <- 0 until filesHere.length - 1 do println(filesHere(i))
+
+for file <- filesHere do if file.getName.endsWith(".bloop") then println(file)
