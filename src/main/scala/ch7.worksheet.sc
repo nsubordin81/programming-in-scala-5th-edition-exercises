@@ -76,3 +76,48 @@ for i <- 1 until 4 do println(s"Iteration $i")
 for i <- 0 until filesHere.length - 1 do println(filesHere(i))
 
 for file <- filesHere do if file.getName.endsWith(".bloop") then println(file)
+
+// for expressions can contain filters, in fact they can contain multiple filters, so no need to write the if inside the for expression.
+for
+  file <- filesHere
+  if file.isFile
+  if file.getName.endsWith(".bloop")
+do println(file)
+
+def fileLines(file: java.io.File) =
+  scala.io.Source.fromFile(file).getLines().toArray
+
+val filesInThisDir = java.io.File("./src/main/scala").listFiles
+
+def grep(pattern: String) =
+  for
+    file <- filesInThisDir
+    if file.getName.endsWith(".worksheet.sc")
+    line <- fileLines(file)
+    if line.trim.matches(pattern)
+  do println(s"$file: ${line.trim}")
+
+grep(".*gcd.*")
+
+// just like the last one except notice how we will bind the result of line.trim to a variable so we don't have to compute it again
+// this is useful when you want to define an operation that is expensive inline
+def otherGrep(pattern: String) =
+  for
+    file <- filesInThisDir
+    if file.getName.endsWith(".worksheet.sc")
+    line <- fileLines(file)
+    trimmedLine = line.trim
+    if trimmedLine.matches(pattern)
+  do println(s"$file: $trimmedLine")
+
+otherGrep(".*file.*")
+
+// look! it is a yield statement. Tis is good because the output of each iteration of the generator expression is not Unit, not side effecting, results
+// in a collection whose type is given by the type of the output of the generator expression.
+def grepToArray(pattern: String) =
+  for
+    file <- filesInThisDir
+    if file.getName.endsWith(".worksheet.sc")
+  yield file
+
+grepToArray(".*gcd.*")
