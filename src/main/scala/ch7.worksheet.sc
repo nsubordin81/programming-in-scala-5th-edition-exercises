@@ -1,3 +1,4 @@
+import scala.compiletime.ops.string
 val args = List.empty
 
 val name =
@@ -121,3 +122,84 @@ def grepToArray(pattern: String) =
   yield file
 
 grepToArray(".*gcd.*")
+
+def getLines() =
+  for
+    file <- filesHere
+    if file.getName().endsWith(".worksheet.sc")
+    line <- fileLines(file)
+    trimmed = line.trim
+    if trimmed.matches(".*for.*")
+  yield trimmed.length
+
+getLines()
+
+// throw new IllegalArgumentException
+
+def half(n: Int) =
+  // if the result is the exception the type of the exception will be Nothing
+  // this works, so the type of this whole expression is a floating point
+  // even though it migh tresult in an expression that returns type Nothing.
+  if n % 2 == 0 then n / 2 else throw new RuntimeException("n must be even")
+
+import java.io.FileReader
+import java.io.FileNotFoundException
+import java.io.IOException
+
+// catching checked exceptions or putting in a throws clause is not required in scala.
+//try catch syntax example.
+// try
+
+//   val f = new FileReader("input.txt")
+// // Use and close file
+// catch
+//   case ex: FileNotFoundException => // Handle missing file
+//   case ex: IOException           =>
+// // Hanle other I/O error
+
+val file = new FileReader("src/main/scala/ch7.worksheet.sc")
+try println(file.read()) // Use the file
+finally file.close() // be sure to close the file
+
+// try catch finally clause in scala is the same as java's but it doesn't result in a value in java.
+
+// notice though that if you have an explicit return clause then the finally will overrule the return value from the try.
+
+// overall advice though is don't even try to return anything from a finally clause, you generally don't want the finally value to have that
+// purpose it should be cleaning up connections to none memory managed objects.
+def contrived(): Int = try return 1
+finally return 2
+
+contrived()
+
+def contrivedButBetter(): Int = try 1
+finally 2
+
+contrivedButBetter()
+
+// match expressions (memory match game :p)
+
+def matcher(item: String): Unit =
+  item match
+    case "salt"  => println("pepper")
+    case "chips" => println("salsa")
+    case "eggs"  => println("bacon")
+    case _       => println("huh?")
+
+matcher("salt")
+matcher("conglesiated")
+matcher("exactly")
+
+def matcherWithReturn(item: String): String =
+  item match
+    case "salt" => "pepper"
+    case _      => "huh??"
+
+val huh = matcherWithReturn("consigned")
+
+// there is no break or continue control structure in scala!!
+// you can replace continues with a different if statement
+// you can replace breaks with a boolean indicator
+// you can use recursion to get rid of the while loop and the state mutation it requires.
+
+// shadow is possible in scala unlike in java where the compiler will not let you have two variables with the same name in nested scopes
