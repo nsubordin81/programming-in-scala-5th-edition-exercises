@@ -203,3 +203,65 @@ val huh = matcherWithReturn("consigned")
 // you can use recursion to get rid of the while loop and the state mutation it requires.
 
 // shadow is possible in scala unlike in java where the compiler will not let you have two variables with the same name in nested scopes
+
+def makeRowSeq(row: Int) =
+  for col <- 1 to 10 yield
+    val prod = (row * col).toString
+    val padding = " " * (4 - prod.length)
+    padding + prod
+
+def makeRow(row: Int) = makeRowSeq(row).mkString
+
+def multiTable() =
+  val tableSeq =
+    for row <- 1 to 10
+    yield makeRow(row)
+
+  tableSeq.mkString("\n")
+
+multiTable()
+
+// exercise I gave myself, do this again, trying not to look at solution, add feature of coefficient
+
+def makeRowDouble(row: Int, coefficient: Int) =
+  for col <- 1 to 10 yield
+    val prod = (col * row * coefficient).toString
+    val padding = " " * (4 - prod.length)
+    padding + prod
+
+def makeRow(row: Int, coefficient: Int) =
+  makeRowDouble(row, coefficient).mkString
+
+def multiTableDouble() =
+  val tableSeq =
+    for row <- 1 to 10
+    yield makeRow(row, 2)
+
+  tableSeq.mkString("\n")
+
+multiTableDouble()
+
+// recall test
+// list the control structures available in scala 3:
+/** for expressions - immutable, don't modify an index to iterate, use
+  * generators. can have conditional filters, can be nested, can yield new
+  * values into a collection while loops - should be viewed skeptically, require
+  * the use of a var, don't return anything, side effecting if expressions -
+  * return a value, different from java in this way, makes things more
+  * expressive less error prone match expressions - can be used for pattern
+  * matching we haven't explored this that much yet.
+  *
+  * results, did I miss anything? sorry formatter really messed this up
+  * 1.break and continue don't exist, but you shouldn't have been using them in
+  * the first place. instead for continue, you guard your code with a
+  * conditional statement which will skip the loop if it is false. if you want
+  * to break out of the whole loop, then you could use an indicator as part of
+  * your looping criteria 2. scala's match control structure doesn't fall
+  * through and breaks are implicit 3. totally missed try catch. It is pretty
+  * similar, maybe a few syntactic differences 4. for expressions let you bind
+  * variables inside the stream, so you can reduce computation. 5. while loops
+  * can be turned into do while loops by putting the do() at the end. 6.
+  * something you might expect to work in scala that works in java but it
+  * doesn't is using reassignment inline. in java this returns the newly
+  * assigned value, in scala it returns Unit.
+  */
