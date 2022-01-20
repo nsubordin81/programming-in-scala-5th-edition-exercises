@@ -47,3 +47,14 @@ print(
 
 // key lesson here was that nested functions are aware of the context of their parent functions and so
 // you can share variables instead of passing scope around.
+
+// function literal is the name given to the lambda style functions in scala 3. they mention that these are compiled into a method handle
+// and that this method handle is then instantiated at runtime into an object which is called a function value.
+// example of function literal at compile time: (x: Int) => x + 1.
+// using this as a function value is when you, say, assign it to a variable like so: val increase = (x: Int) => x + 1. now you can call increase diretly with args
+
+def testingMultilineLiteral = (x: Int) =>
+  val y = 2
+  x + y
+
+testingMultilineLiteral(2)
