@@ -58,3 +58,13 @@ def testingMultilineLiteral = (x: Int) =>
   x + y
 
 testingMultilineLiteral(2)
+
+val someNumbers = List(3, 2, 1, 0)
+
+val literalPrint = someNumbers.foreach((x: Int) => println(x))
+
+val testFilter = someNumbers.filter((x: Int) => x > 0)
+// scala compiler knows someNumbers is a list so it infers the type of x
+// targeted typing
+val testFilterTypeInference = someNumbers.filter((x) => x > 0)
+val testNoParens = someNumbers.filter(x => x > 0)
