@@ -6,5 +6,5 @@ lazy val root = project
     name := "scala3-simple",
     version := "0.1.0",
     scalaVersion := scala3Version,
-    libraryDependencies += "com.novocode" % "junit-interface" % "0.13.3" % "test"
+    libraryDependencies += "com.github.sbt" % "junit-interface" % "0.13.3" % Test
   )

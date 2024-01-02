@@ -19,3 +19,8 @@ object JoesPrefs:
 import JoesPrefs.{drink, prompt}
 
 Greeter.greet("Joe")
+
+
+
+
+
