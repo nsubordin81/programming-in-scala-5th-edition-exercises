@@ -163,6 +163,7 @@ else
 
 
 
+val myList: List[String] = List("hi", "I'm", "me")
+myList.map {item => s"${item} Taylor"}
 
-
-
+myList.flatMap { item => List(item)}
