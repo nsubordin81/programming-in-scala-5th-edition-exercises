@@ -21,8 +21,15 @@ singleSpace((s1)) == singleSpace(s2)
 // even though we don't have access to the scala standard lib to update the string class
 
 extension (s:String)
-    def singleSpace: String =
+    def oneSpace:String =
         s.trim.split("\\s+").mkString(" ")
 
 // rules: 
     // place a single variable of the type to which you want to add the extension
+    // extension (s: String)
+    // in this example, s is the 'receiver' variable, indicating that the type String will receive the method into it. 
+
+s1.oneSpace == s2.oneSpace
+
+// et viola!
+
