@@ -33,3 +33,52 @@ s1.oneSpace == s2.oneSpace
 
 // et viola!
 
+// these are called applications of the extension method, when you use it like it belonged to the type in question like shown above
+
+// implementation note about twhat the compiler is doing and what it is not doing. 
+// it is not creating an anonymous class out of the extension method which receives that reciever as a constructor arg
+// they instead rewrite the method in place to take the receiver as an argument and then maintains an internal extension marker
+// so the compiler knows how to handle it when clients call if off the back of an object of that type. 
+
+// the main reason for this is there is no extra boxing, which was a cost of scala 2 implicit classes. I'm not sure if I've followed that point through
+// but suffice to say I think it means there were costs performance wise to doing it with an anonymous class just to get the code to be more readable. 
+
+// the easiest way to to make an extension method available is to bring the  name of the rewritten method into lexical scope
+// wtf is lexical scope? so this is the book's way of drawwing contrast between using something like context parameters or implicits 
+// and just using the language support for explicit separation of the parts of a program and management of what identifiers are bound in that 
+// portion of the program. 
+
+// ok on to generic extension methods. 
+// how does this differ from what I've already done? I just exxtended string to transform strings for comparison with each other
+
+List(1, 2, 3).head
+// but the below won't work, throws no such element exception. 
+// List.empty.head
+
+// so let's use a headOption method to get back and Option. A ha! I see where this is going now. headOption on the List 
+// collection should owrk for any type that a collection can contain. 
+
+List(1, 2, 3).headOption
+List.empty.headOption
+
+// ok, but we already ahve this, so why does this come up for extension methods? well, as the book says, tail doesn't have the same
+
+List(1, 2, 3).tail
+// this will throw exception no such element
+// List.empty.tail
+
+// but this won't work either because the method DNE
+// List.empty.tailOption
+// value tailOption is not a member of List[Any] - did you mean List[Any].lastOption?
+
+// so we define a generic extension method so we don't ahve to work with Ints. 
+
+extension [T](xs: List[T])
+    def tailOption: Option[List[T]] =
+        if xs.nonEmpty then Some(xs.tail) else None
+
+List.empty.tailOption
+
+List(1, 2, 3).tailOption
+
+// cool!
