@@ -82,3 +82,13 @@ List.empty.tailOption
 List(1, 2, 3).tailOption
 
 // cool!
+
+// collective extensions now. 
+// main idea here is that you don't just want to define one method. 
+
+// for some reason again the authors decide that a good example is one that requires deeper comp sci knowledge
+// fair enough
+// twos complement. take an Int and invert all its bits but then add one
+// representation of numbers low level computing usually done with a sign bit, which means positive and negative nums
+// That is as far as I can take it from this descrption, more tomorrow when I look i tup and refresh my memory. 
+
