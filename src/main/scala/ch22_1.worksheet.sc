@@ -92,3 +92,26 @@ List(1, 2, 3).tailOption
 // representation of numbers low level computing usually done with a sign bit, which means positive and negative nums
 // That is as far as I can take it from this descrption, more tomorrow when I look i tup and refresh my memory. 
 
+/* ok, so now I have the wikipedia page. important points:
+    - most computers use twos complement to represent signed integers
+    - most significant bit determines the sign, which meanas whe it is turned on the number is negative and when it is
+      off, positive
+    - one's complement is a whole other thing, and it has a positive and negative zero. 
+    - here is how it works: 
+        - you start with the binary representation of the number, leading bit being a sign bit
+        - you invert the representation. all 1 bits become 0 and all 0 bits become 1
+        - then you add 1 to the inverted number and ignore overflow. if you account for overflow you will have the wrong result.lazy val 
+    - ok, so that makes no sense to me yet, let's see an example
+        - you want to do -6. 
+            - start with 6 decimal, represent it with leading sign bit in binary. that is 0110. how? 
+                - leading bit is off, so it is a positive number.lazy val 
+                - rest is just conversion, (0 * 2^3) + (1 * 2^2) + (1 * 2^1) + (0 * 2^0) = 4 + 2 = 6
+            - now you flip the bits, 1001
+            - add 1 to the number. the least place value has a 1, so it carries into the second slot 1010 
+            - verify you have just made a two's complement representaiton of -6. remember that the sign bit is negative
+              when adding up things. 1010 = −(1×23) + (0×22) + (1×21) + (0×20) = 1×−8 + 0 + 1×2 + 0 = −6.
+
+    - but why even represent numbers this way? because twos complement representation is arithematically compatible with
+      unsigned integers. it will be more efficient to not have to translate between signed and unsinged integers for 
+      all integer arithmetic that mixes them
+
