@@ -115,3 +115,34 @@ List(1, 2, 3).tailOption
       unsigned integers. it will be more efficient to not have to translate between signed and unsinged integers for 
       all integer arithmetic that mixes them
 
+    the book goes on to talk about the main points I should care about here. using twos complement you can do a twos complement 
+    converstion of a number to get its additive inverse and then do an add operation, which may be another way of saying the above, 
+    or a separate but related point. then also you don't have negative zero, and that value that would have been negative zero
+    is instead the smallest negative number representation.
+
+    Int.MaxValue // 2147483647
+    Int.MinValue // -214783648 <-- look it is 1 whole number unit away on the number line more than the positive side
+
+    turns out, this little extra can cause issues. and now we are getting to the point of why the book example is meaningful
+    for extension methods. Two's complement ignores overflow , thank goodness I spent a little time on wikipedia because this was 
+    not covered in the book, and so in the example they give, if you were to take the absolute value of the smallest negatigv int, 
+    since the positive equivalent is out of range of the twos complement representation of integer, twos complement ignores the
+    overflow and you are right back to the negative number you started with.lazy val 
+
+    so now, with all that background (really? did we need to use this example given the amount of background? I get it though I should be 
+    learning or already know all this stuff anyway), let's detect overflow when doing things with integers
+
+    */
+
+    extension (n: Int)
+        def absOption: Option[Int] = 
+            if n != Int.MinValue then Some(n.abs) else None
+
+    // oh this is brilliant! so we wrap our result in an option and we don't yield a value if we are at the minimum range of the Int
+
+    42.absOption
+    -42.absOption
+    Int.MaxValue.absOption
+    Int.MinValue.absOption
+
+
