@@ -137,6 +137,9 @@ List(1, 2, 3).tailOption
     extension (n: Int)
         def absOption: Option[Int] = 
             if n != Int.MinValue then Some(n.abs) else None
+        // now going to add in another method to handle the other overflow edge case. unary negation of min value
+        def negateOption: Option[Int] =
+            if n != Int.MinValue then Some(-n) else None
 
     // oh this is brilliant! so we wrap our result in an option and we don't yield a value if we are at the minimum range of the Int
 
@@ -144,5 +147,10 @@ List(1, 2, 3).tailOption
     -42.absOption
     Int.MaxValue.absOption
     Int.MinValue.absOption
+
+    // and now some evidence that the negate extension method also works
+    42.negateOption
+    -42.negateOption
+    Int.MinValue.negateOption
 
 
