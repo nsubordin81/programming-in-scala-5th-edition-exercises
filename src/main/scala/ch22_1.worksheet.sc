@@ -158,6 +158,16 @@ List(1, 2, 3).tailOption
     -42.negateOption
     Int.MinValue.negateOption
 
+    // oh sh&&!! I finally just realized what they have been explaining this whole chapter! 
+    // ok so the rewriting the compiler does is of the callsite for these things, so, say I hava an Int:
+    // x: Int
+    // I can do x.absOption
+    // the compiler will go through and rewrite as
+    // absOption(x)
+    // and it will also rewrite the extension method as 
+    // def absOption(x:Int): Option[Int] = if !x.isMinValue then some(n.abs) else None
 
+    // and I guess the x.isMinValue callsite will have to be edited or updated in some way because as written it doesn't pass in x???
+    // well I get the general idea now. 
 
 
