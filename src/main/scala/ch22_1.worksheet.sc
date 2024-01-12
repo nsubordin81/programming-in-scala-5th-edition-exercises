@@ -135,11 +135,16 @@ List(1, 2, 3).tailOption
     */
 
     extension (n: Int)
+        // look! now there are two of these extension methods, they are called sibling methods. You can invoke them
+        // from within each other as if they were both part of Int. So you won't see the old value here, but I'm going to refactor
+        // out a check for isMinValue
+        def isMinValue(v: Int): Boolean =
+            v == Int.MinValue
         def absOption: Option[Int] = 
-            if n != Int.MinValue then Some(n.abs) else None
+            if !isMinValue(n) then Some(n.abs) else None
         // now going to add in another method to handle the other overflow edge case. unary negation of min value
         def negateOption: Option[Int] =
-            if n != Int.MinValue then Some(-n) else None
+            if !isMinValue(n) then Some(-n) else None
 
     // oh this is brilliant! so we wrap our result in an option and we don't yield a value if we are at the minimum range of the Int
 
@@ -152,5 +157,7 @@ List(1, 2, 3).tailOption
     42.negateOption
     -42.negateOption
     Int.MinValue.negateOption
+
+
 
 
