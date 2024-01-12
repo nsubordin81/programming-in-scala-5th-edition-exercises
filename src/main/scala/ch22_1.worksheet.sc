@@ -171,3 +171,13 @@ List(1, 2, 3).tailOption
     // well I get the general idea now. 
 
 
+    // ok, so this is a good place to think about ad hoc polymorphism and typeclasses. there are scenarios where
+    // it isn't just ints that we want to allow to be part of this extension behavior. so we have a subset of types
+    // that we want to be able to use with this behavior, but we don't want ot enforce that they all share the same superclass
+    // sounds like a job for typeclasses! 
+
+    // remind me again why typeclasses are advantageous over using an inheritance hierarchy?? Oh, it is becausae 
+    // you don't want to have to go in and modify the inheritance hierarchy every time you want to add a type that 
+    // should be eligible to inherit this behavior. in fact, sometimes you can't, closed for extension my dude. 
+
+
