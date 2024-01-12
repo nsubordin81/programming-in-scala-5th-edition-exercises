@@ -180,4 +180,6 @@ List(1, 2, 3).tailOption
     // you don't want to have to go in and modify the inheritance hierarchy every time you want to add a type that 
     // should be eligible to inherit this behavior. in fact, sometimes you can't, closed for extension my dude. 
 
+    // note to self, read this later: https://mmhaskell.com/blog/2019/1/28/why-haskell-iv-typeclasses-vs-inheritance
+
 
