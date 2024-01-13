@@ -193,6 +193,79 @@ List(1, 2, 3).tailOption
     // true of invoking funcitons, you can use a more specific class in place of a more general one in contexts where only the general 
     // behavior is required. 
 
+    // ok, so for this example of typeclasses with extension methods, we are seeing that for the behavior of returning a
+    // None value when there is an overflow instead of quietly ignoring the overflow and returning back the original value
+    // we'd want this for other two's complement implementation types
+
+    // you could define an extension method set for each of the other affected types, but you'd be duplicating the behavior 
+    // just to get it to apply everywhere
+
+    // a better approach is to define extension method that is enabled bya  typeclass, this is an 'ad hoc extension'
+    // this would work with any type containing a given instance of that typeclass. 
+
+    // let's see what this looks like
+
+    // first maybe there is already a typcalass trait to put the extension on
+    // Numeric is too general, you get floats and doubles and those don't use twos complement
+    // integral also doesn't work because BigInt is a part of it, and it doesn't overflow
+
+    // so we need a new trait that just represents the set of types taht use twos complement as integral types
+
+    trait TwosComplement[N]:
+        
+        def equalsMinValue(n: N): Boolean
+        def absOf(n: N): N
+        def negationOf(n: N): N
+
+    // ok, and now just like on the chapter for context params where typeclasses were introduced, let's 
+    // put the givens in a companion object of this trait
+    object TwosComplement:
 
 
+    given tcOfByte: TwosComplement[Byte] with
+        def equalsMinValue(n: Byte) = n == Byte.MinValue
+        def absOf(n: Byte) = n.abs
+        def negationOf(n: Byte) = (-n).toByte
+    
 
+    given toOfShort: TwosComplement[Short] with
+        def equalsMinValue(n: Short) = n == Short.MinValue
+        def absOf(n: Short) = n.abs
+        def negationOf(n: Short) = (-n).toShort
+
+
+    given tcOfShort: TwosComplement[Int] with
+        def equalsMinValue(n: Int) = n == Int.MinValue
+        def absOf(n: Int) = n.abs
+        def negationOf(n: Int) = -n
+
+    given tcOfLong: TwosComplement[Long] with
+        def equalsMinValue(n: Long) = n == Long.MinValue
+        def absOf(n: Long) = n.abs
+        def negationOf(n: Long) = -n
+
+    // ok here is a great example of using a context paramter to achieve ad hoc polymorphism with a typeclass
+    // so as long as there is a given instance defined for whichever type N has these extension methods invoked on 
+    // them, it will be passed in as teh context param and we will expectt that the instance defined those methods
+    // on it and they will be called in here.
+
+    // so isMinValue, absOption, and negateOption only need to be defined one time, but since Int, Short, Byte and Long
+    // all hve different ways to invoke absolute value, negation, and check if their value is the min value, we need 
+    // to wrap those in a common interfvace that these extension methods can expect on the typeclass. 
+
+    // but we don't touch the actual implementations of Int, SHort, Byte or Long to both extend them with this behavior
+    // of returning none, or achieving the syntactic sugar of pretending that they have these extension methods defined as members. 
+
+    // that's pretty neat! because of the way it is!
+    extension [N](n: N)(using tc: TwosComplement[N])
+        def isMinValue: Boolean = tc.equalsMinValue(n)
+        def absOption: Option[N] = 
+            if !isMinValue then Some(tc.absOf(n)) else None
+        def negateOption: Option[N] = 
+            if !isMinValue then Some(tc.negationOf(n)) else None
+
+
+    Byte.MaxValue.negateOption
+    Byte.MinValue.negateOption
+    Long.MaxValue.negateOption
+    Long.MinValue.negateOption
