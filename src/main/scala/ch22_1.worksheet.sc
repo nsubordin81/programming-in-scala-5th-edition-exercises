@@ -181,5 +181,18 @@ List(1, 2, 3).tailOption
     // should be eligible to inherit this behavior. in fact, sometimes you can't, closed for extension my dude. 
 
     // note to self, read this later: https://mmhaskell.com/blog/2019/1/28/why-haskell-iv-typeclasses-vs-inheritance
+    // ok, I read it, and I liked the points it made. what I feel like I already should have grasped but it is good to 
+    // have spelled out well, is that the weakness of OO inheritance as done by java and C++ and other languages is 
+    // that it creates coupling between the parent and child classes, and between the types that share the desired behavior
+    // whereas typeclasses just specify the behavior and typeclasses are independent of each other. If you use inheritance
+    // to share behavior, then changes to the parent class may result in chagnes to children, overrides would have to be
+    // modified in some cases, and member variables that children need may end up bleeding upwards into the parent class
+    // to satisfy the reuqirements of the behaviors being shared, which breaks the encapsulation and loose coupling that should exist
+    // however, inheritance does give you reusabiliyt of functions, a way to achieve polymorphism where members of a list 
+    // can be different types as long as the list is only used in the way thaty their superclass needs it, and that is also generally
+    // true of invoking funcitons, you can use a more specific class in place of a more general one in contexts where only the general 
+    // behavior is required. 
+
+
 
 
