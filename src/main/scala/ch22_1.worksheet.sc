@@ -299,3 +299,11 @@ import TwosComplementOps.*
 
 32.absOption
 
+// so the example here actually showed the less typical use case where we recognized the need for extension methods
+// to add syntactic sugar to a set of method calls to twos complement types. context params and type classes were in a supporting
+// role, enabling this to happen. however, generally we have a role reversal
+// meaning the type classes and ad hoc polymorphism take center stage and extension methods are also there. 
+
+// for an example: 
+    // go checkout the worksheet ch21_3 because it had the Ord trait in it already and I'm extending that to have 
+    // extension methods for <, <=, >, >= etc. 

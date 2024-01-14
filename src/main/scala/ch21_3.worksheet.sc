@@ -101,6 +101,23 @@ j */
 trait Ord[T]:
     def compare(x: T, y: T): Int
     def lteq(x: T, y: T): Boolean = compare(x, y) < 1
+    def lt(x: T, y: T): Boolean = compare(x, y) < 0
+    def gt(x: T, y: T): Boolean = compare(x, y) > 0 
+    def gteq(x: T, y: T): Boolean = compare(x, y) > -1
+
+    // ok so fleshed out this Ord trait with more of the comparison operators, and then from chapter 22 I 
+    // have these extension methods. not onnly are they named with the operator names, but they will also be 
+    // rewritten by the compiler so that I can write them as if they were on the 'T' type as a method, so 
+    // say T was Int concretely. There is a given for Int defined in the Ord type class object, so that means
+    // I can do something like what I just rewronte insert4 to do. it is using a given which is Ord[T]
+    // so if the list I pass in is Int, then the comparison x <= xs.head will summon the Ordt[T] extension method 
+    // for <= in Ord
+
+    extension (lhs: T)
+        def < (rhs: T): Boolean = lt(lhs, rhs)
+        def <= (rhs: T): Boolean = lteq(lhs, rhs)
+        def > (rhs: T): Boolean = gt(lhs, rhs)
+        def >= (rhs: T): Boolean = gteq(lhs, rhs)
 
 // ok so this doesn't show too much that I'm removing a lot of verbosity, I still have to supply the Ord type with using at both sites, but then 
 // when invoking isort4 I don't have to pass the sorting algorithm in at the callsite for insert4 and when calling the public interface of isort4 I won't have to either
@@ -110,7 +127,7 @@ def isort4[T](xs: List[T])(using ord: Ord[T]): List[T] =
     else insert4(xs.head, isort4(xs.tail))
 
 def insert4[T](x: T, xs: List[T])(using ord: Ord[T]): List[T] =
-    if xs.isEmpty || ord.lteq(x, xs.head) then x::xs
+    if xs.isEmpty || x <= xs.head then x::xs
     else xs.head :: insert4(x, xs.tail)
 
 // but now I do need to provide a sorting function to be provided by the compiler, so I need a given
@@ -176,3 +193,4 @@ class hierarchy being followed, but the method will only compile if the type it 
 
 // you also don't need to give a name to context parameters that are just pass throughs to the functionsl that actually use the parameters. this is called an anonymous parameter
 
+// I may need to rewrite this several times or invent my own examples so it really sticks. 
