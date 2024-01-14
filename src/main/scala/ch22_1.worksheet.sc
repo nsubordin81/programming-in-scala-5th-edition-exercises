@@ -257,15 +257,45 @@ List(1, 2, 3).tailOption
     // of returning none, or achieving the syntactic sugar of pretending that they have these extension methods defined as members. 
 
     // that's pretty neat! because of the way it is!
+extension [N](n: N)(using tc: TwosComplement[N])
+    def isMinValue: Boolean = tc.equalsMinValue(n)
+    def absOption: Option[N] = 
+        if !isMinValue then Some(tc.absOf(n)) else None
+    def negateOption: Option[N] = 
+        if !isMinValue then Some(tc.negationOf(n)) else None
+
+
+Byte.MaxValue.negateOption
+Byte.MinValue.negateOption
+Long.MaxValue.negateOption
+Long.MinValue.negateOption
+
+    // but you can't do this: 
+//     BigInt(42).negateOption
+
+//     and this gives the following error: 
+
+// value negateOption is not a member of BigInt.
+// An extension method was tried, but could not be fully constructed:
+
+//     this.negateOption[BigInt](BigInt.apply(42))(
+//       /* missing */summon[MdocApp.this.TwosComplement[BigInt]])
+
+//     failed with:
+
+//         No given instance of type MdocApp.this.TwosComplement[BigInt] was found for parameter tc of method negateOption in object TwosComplementmdoc
+
+
+// ok, so also it is beest to put your extension methods into a singleton object so they can be imported into lexical 
+// scope and used by other code. so let's do that real fast:
+
+object TwosComplementOps:
     extension [N](n: N)(using tc: TwosComplement[N])
         def isMinValue: Boolean = tc.equalsMinValue(n)
-        def absOption: Option[N] = 
-            if !isMinValue then Some(tc.absOf(n)) else None
-        def negateOption: Option[N] = 
-            if !isMinValue then Some(tc.negationOf(n)) else None
+        def absOption: Option[N] = if !isMinValue then Some(tc.absOf(n)) else None
+        def negateOption: Option[N] = if !isMinValue then Some(tc.negationOf(n)) else None
 
+import TwosComplementOps.*
 
-    Byte.MaxValue.negateOption
-    Byte.MinValue.negateOption
-    Long.MaxValue.negateOption
-    Long.MinValue.negateOption
+32.absOption
+
