@@ -113,6 +113,10 @@ trait Ord[T]:
     // so if the list I pass in is Int, then the comparison x <= xs.head will summon the Ordt[T] extension method 
     // for <= in Ord
 
+    // some cool things here, notice that there is no need to have (using tc: ) here. you are in the trait which is the 
+    // type class, so you are invoking the extension on same parameterized type as Ord[T], the T type. and 
+    // because you aren't using ord in that other way, with a given instance, you also can just call the methods off of the 
+    // this object, like lt instead of ord.lt. the typclass part will still work the same way and so will the extension
     extension (lhs: T)
         def < (rhs: T): Boolean = lt(lhs, rhs)
         def <= (rhs: T): Boolean = lteq(lhs, rhs)
@@ -194,3 +198,12 @@ class hierarchy being followed, but the method will only compile if the type it 
 // you also don't need to give a name to context parameters that are just pass throughs to the functionsl that actually use the parameters. this is called an anonymous parameter
 
 // I may need to rewrite this several times or invent my own examples so it really sticks. 
+
+/* and pasting this tidbit from the book: 
+
+Change the properties of one ball without affecting the others using the Inspector.
+
+
+
+
+*/
