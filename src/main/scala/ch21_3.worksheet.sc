@@ -207,3 +207,13 @@ Change the properties of one ball without affecting the others using the Inspect
 
 
 */
+
+
+/* order scala compiler uses to find extension methods
+
+ok so you have some object in scala, say it is the number 1, 1.addOne. scala compiler does 
+1. is it on Int? that is the calss of the type itself. if it is, no need to look further
+2. otherwise candidate compile error. so scala goes into try catch mode, first
+    2. a. does an extension heal it? 
+    2. b. does an implicit converstion heal it? 
+*/
