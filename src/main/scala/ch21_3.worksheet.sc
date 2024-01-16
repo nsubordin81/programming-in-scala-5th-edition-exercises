@@ -215,5 +215,23 @@ ok so you have some object in scala, say it is the number 1, 1.addOne. scala com
 1. is it on Int? that is the calss of the type itself. if it is, no need to look further
 2. otherwise candidate compile error. so scala goes into try catch mode, first
     2. a. does an extension heal it? 
+        - look in lexical scope for extension methods as the first phase
+            - defined there
+            - imported there
+            - inherited from a supertype that this scope is using
+            - example, say that we import the TwosComplementOps.absOption from the ch22 worksheet,
+              then it will work in that acope because it is resolved in lexical scop
+        - second phase: 
+            - look at the given instances defined in lexical scope
+            - look t members of companion objects of the receipvers class, supoerclasses, and supertraints
+            - look at the members of given instances in those same companion objects
+            - another way is to attempt to tranform the type of receiver with an implicit conversion, that is 2b
     2. b. does an implicit converstion heal it? 
+
+    in either of these two phases, isf the compiler sees a more specific extension method, it will use that one. 
+    for example, if the extension method was for a supertype and there is a subtype defined, or the given was for a type that
+    the trait inherits from, it will use t emroe explicit one. this goes back to needing to define specific types 
+    for your context params so that there isn't a chance of accidentally getting the wrong things passed in in context. 
+         
+3. if you couldn't find anything with 2 a or 2 b, throw that canadiate compile error
 */
