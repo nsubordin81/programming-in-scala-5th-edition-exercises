@@ -72,5 +72,133 @@ sealed trait RainbowColor
     class Indigo extends RainbowColor
     class Violet extends RainbowColor
 
+so that is a hierarchy that can't be extended outside of itself, and you can define a method that takes some 
+RainbowColor subtype as an argument, 
+
+def paint(rc: RainbowColor): Unit
+
+and you could only pass in arguments that have one of the eight types shown in that list. there will be a compiler error if you try to 
+use something other than that type. So this is technically a special case of ad hoc polymorphism called 'subtyping polymorphism' 
+because the classes of all the instances passed to paint have to mix in RainboColor, and also adhere to any constraints established by the interface of RainbowColor. 
+
+so there is a difference between the rainbow and the - examples. in the - example, the overloading of methods one, the types that
+are implementing - don't have to adhere to any constraints imposed by any type except the one they all have in common to inherit from, 
+which in scala is the 'Any' type. 
+
+you can sum that all up to one key difference between the two approaches
+- subclassing polymorphism is for let you use types interchangeably that are *related*worksheet
+- ad hoc polymorphism allows you to use types interchangeably that are * unrelated* or at least can be
+
+
+so when to use which? 
+- subtyping is good when you have a well defined, self-contained family of types. enums are a good example, days of the week, colors of the rainbow,
+floors in a building, planets in the solar system, etc. sealed traits also. so these things
+    - are small in number, not a lot to manage
+    - you can think of and define the whole set now, you don't expect it to change frequently
+    - the types are related, you know what they have in common and the then that they have in common shares some code you'd like to reuse
+    - maybe they are unsealed but are very related and tend to be extended together with the same set of behaviors
+    - the behaviors that they are sharing through the polymorphism are not these extremely comman and widely applicable behaviors. for example: 
+        - serialization - any object can be written into a bystestream and sent over the wire, or at least you want that for many different kinds of objects as a feature
+        - ordering - whether things are  in order is a common concern that could come up for many of the types you would define, especially if they are some type of collection
+
+    picking on their own standard library, the authors here (I presume this includes some scala core contributors) talk about the Ordered trait
+
+    it is a trait that supports ordering with subtyping. you have to mix Ordered trait into a class and implement the compare method. if you do this, 
+    you get implementations of <, >, <=, and >= for free with it. you als can now use Ordered as an uper bound in a sort method. I'm not sure what 
+    they are saying here exactly, note to self look at Listing 18.11 and record what you learn abot upper bound . 
+
+    I need to go back and go over the type variance chapters, they are starting to use those to make a point here and I'm not getting it. 
+
+    section 11.2 one way traits are used: add methods to a class in terms of methods the class already has. 
+    so you ahve a thin interface of a class and you make it right by extending it with more methods
+
+    rich interface - nice for calllers, have everything they would need, they can pick a more specific behavior and have to do less coding on top of it 
+    to get what they want. 
+    thin interface - fewer methods, easier on the implementers because they only have to maintain those methods. 
+
+    traits make it so that you define the method one time in the trait and then mix it in to the interface of the classes that 
+    mix in the trait. that means you don't hae to keep reimplementing the extra methods for each new class, just mix them in. 
+
+    the way to do this in scala with traits is to implement some abstract methods in the trait that represent your thin interface, 
+    and then also implement some concrete ones and have a class mix in the trait and implement the abstract ones so that it can get the rich interface
+    that comes with the trait. 
+
+    so this section uses the example of Ordered trait to demonstrate how you can simplify the interface of anything that needs 
+    comparison operators. you define compare() method in terms of the type of the class you are implementing and you get <, >, <=, >= all
+    for free for that type. 
+
+    you don't get = though because apparently due to type erasure you can't know the type of the passed in object to do a proper equals() override
+    and there is a way around this but they have chosen to reserve it for "Advanced Programming in Scala" which I don't have a copy of. 
+
 */
 
+trait Ordered[T]:
+  def compare(that: T): Int
+
+  def <(that: T): Boolean = (this compare that) < 0
+  def >(that: T): Boolean = (this compare that) > 0
+  def <=(that: T): Boolean = (this compare that) <= 0
+  def >= (that: T): Boolean = (this compare that) >= 0
+
+/* this trait comes up again in chapter 18 when talking about uppwer bounds and variance. I need to read this full chapter to 
+fully appreciate what it is saying, but let's just go over the sectoin they referenced for now. they pull in 
+the ordered trait by having Person inherit it to get the comparison operators. They implement the compare method as described before
+in terms of the last name and first name  as a series of 'rules' that are pretty intuitive. if the last names are the same irrespective of casing and
+the first name is also this way, then you probably have the same person, otherwise you will get the typical 1, -1, etc. result and use that for <, >, <=, >=
+
+hooray, 2 for 1 deal, this also covers upper bounds so I don't have to look somewhere else for it. T<: Ordered[T] indicates 
+that the type that the list is parameterized with in the signature of 
+def orderedMergeSort[T <: Ordered[T]]<xs: List[T]): List[T] 
+must be a sybtype of a type that mixes in Ordered. So you have that subtyping constraint in place. got it.
+
+So now we are back to chapter 23 and typeclasses and why the inheritance and subtyping polymorphism can be a hinderance more than a help
+if you share the behavior and create type constraints this way, you are additionally creating the constraint that 
+any type that participates in this set of types will need to mix in Ordered[T], and also adhere to the Ordered[T] interfeace
+
+so what could happen? well, the class you mix Ordered into could define methods where the names or contracts are in conflict with ordered
+do I really know what this means? I guess it means it already has a 'compare' method in this case? maybe it expects somethign else to be true
+about the class that isn't true in Ordered? I'm reaching a little, I have no idea how often this is an issue without trying it out a few times. 
+
+variance conflicts next. looking at the Hope Enum: 
+
+
+*/
+
+enum Hope[+T]:
+  case Glad(o: T)
+  case Sad
+
+/* this is part of a treatise on algebraic data types which I know nothing about and am coming in in the middle of. so let's see how long 
+I can coast without reading yet anothe rprior chapter of the book (so far I'm 0 for 3 on avoiding this).lazy val 
+generally the enum is introduced to talk about composite types. that is because Glad and Sad get combined into Hope
+cardinalities in a compbined type that follow the laws of addition are called sum types. in this way we have 
+an enum. so they discuss in this chapter, though I'm only reading one paragraph, that there is a cardinality of Hope
+that is equaal to the sum of the cardinalities of Glad[T] and Sad. Glad[T] has the cardinality of T. Whatever 
+the number of different values T can represent, Glad can represent that number of values. Boolean can do 2, 
+ so Glad[Boolean] can do 2. Sad can only do Sad because it is a singleton and doesn't have a type parameter. So it has a 
+ cardinality of 1. there is a chart to show it, but it is basically T+1 for Hope[+T]
+
+ This is all very interesting and I'm going to come back to it, but how does it relate to typeclasses and the point that Hope[+T] was \
+ summoned for in the first place? 
+
+ well, it shows that if you were to mix Ordered[T] into Hope[+T] 
+
+the idea being that compare will make Sad the lowest value adn then ordering Glad according to the ordering rules that 
+the parameterized type uses. 
+
+ class Hope[+T <: Ordered[T]] extends Ordered[Hope[T]]
+
+ doesn't work because HOpe is covariant and Ordered is invariant. So the type parameters don't agree
+
+ another issue with subtayping polymorphism is that interfaces already existed and are incompatible.
+
+ more often though, really, is that you can't go back and touch the interface.
+
+ for example, glaring example, Int doesn't mix in Ordered, so you can't sort List[Int] with the orderedMergeSort 
+
+ this is probably the overwhelming reason to use typeclasses over subtyping for polymorphism. For subtyping, 
+ the author of the code would have had to anticipate that your trait was going to exist and extended it 
+ for typeclasses, you can 'grandfather' libraries and classes that already exist into the set of types that work
+ with your functions. 
+
+ This is what I remember from reading about the extension problem and the solution to it that was typclasses. 
