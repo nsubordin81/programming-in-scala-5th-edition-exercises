@@ -35,4 +35,42 @@ cases, time to follow along with the book again.
     - finally, you can define a fypeclass and write teh function to work with types for which a giv3en instance of the typeclass trait is defined 
     -- the third is supposed to be the most flexible, but we don't know why yet, let's find out.   
 
+  first off, typeclass doesn't mean what you think it means. it really means 'a set of types that are grouped tog3ether for some purpose'. you probably
+  thought it meant 'a special kind of class that in some way incorporates type information' didn't you? thought maybe that was the case. don't worry past T,
+  I"m future T and I'm hear to correct all of your mental; inconsistencies. just wait for me to exercise my incredible knowledge and evolved modes of thought to 
+  rock your world. ok. anyway...
+
+  so typeclasses support ad-hoc polymorphism, which we have beaten to death above, but just shorthanding here as 'you can restrict functions to work
+  with only this subset of types'
+
+  original usage of this term ad-hoc polymorphism was applied to things like + and - for langauges like C++ that did operator overloading. 
+  if your type didn't implement the + operator, then the function wouldn't work for it, and you'd get a compilation error. In 
+  Scala, you don't implement an operator on the class, that isn't a thing, methods themselves can be named like operators, you could do it in scala, but it 
+  would be method overloading you would achieve it with. example: 
+
+  def -(x:Double ):Double
+  def -(x: Float):Float
+  def -(x: Long):Long
+  def -(x: Int):Int
+  def -(x: Char):Char
+  def -(x: Short):Short
+  def -(x: Byte):Byte
+
+  so whether these are defined in the same type or not, if they are all in lexical scope, then you will be able to use them in subtraction
+
+so pretend this is all that scala had defined - for. that means, these 7 examples comprise the set of types that will work with the method '-'
+that is what a typeclass is.
+
+oh but wait! you can also achieve this in scala with a class hierarchy!
+
+sealed trait RainbowColor
+    class Red extends RainbowColor
+    class Orange extends RainbowColor
+    class Yellow extends RainbowColor
+    class Green extends RainbowColor
+    class Blue extends RainbowColor
+    class Indigo extends RainbowColor
+    class Violet extends RainbowColor
+
 */
+
