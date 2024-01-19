@@ -202,3 +202,34 @@ the parameterized type uses.
  with your functions. 
 
  This is what I remember from reading about the extension problem and the solution to it that was typclasses. 
+
+ so the cool thing, and the core thing to remember probably, about typeclasses is that they create a new hierarchy 
+ centered around the shared behavior and concept of executing that behavior instead of codifying the hierarchy 
+ with a known set of types that have to extend each other's interfaces as subtypes to become members. 
+
+ ensuring the compatibility becomes easier because the concept that you are focusing on tfor the typeclass
+ is one thing, you don't have to worry that you are muddying up an interface by having your types participate. 
+ also, you can kind of use the typeclass like a wrapper when you declare instances, you specify the type that 
+ the isntance will operate on in your typeclass given instance and then augment it there, instead of having that
+ type itself inherit from some hierarchy. offshoot of that is you don't have to change the type in any way.
+
+ so now they revisit the Ordering trait. surprise! it is also a typeclass. we were using subtyping for it, but 
+ we didn't have to. for things that don't fit well into the hierarhcy or are classes we can't add to the hierarchy, we can still easily 
+ provide an instance of them. so we do this for that Hope enum from before: 
+
+
+*/
+
+object HopeUtils:
+  // add type t for all types that are members of the typeclass already, lets add a hope type to that
+  given hopeOrdering[T](using 
+    ord: Ordering[T]): Ordering[Hope[T]] with 
+    def compare(lh: Hope[T], rh: Hope[T]): Int =
+      import Hope.{Glad, Sad}
+      (lh, rh) match
+        case (Sad, Sad) => 0
+        case (Sad, _) => -1
+        case (_, Sad) => +1
+        case (Glad(lhv), Glad(rhv)) =>
+          ord.compare(lhv, rhv)
+
