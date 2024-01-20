@@ -233,3 +233,98 @@ object HopeUtils:
         case (Glad(lhv), Glad(rhv)) =>
           ord.compare(lhv, rhv)
 
+
+/* the way that typeclasses support ad hoc polymorphism. I feel like I've written this before, but really pushing it in there
+the reason ad hoc polymorphism happens with scala's version of typeclassis is that function can expect that only 
+types that have a given instance defined for that typeclass will be allowed to be passed in as parameters
+
+this is checked at compile time. let's look at an exampole with msort, which I guess is a mergesort implementation which 
+relies on typeclasses. */
+
+def msort[T](xs: List[T]) (using ord: Ordering[T]): List[T] = 
+  def merge(xs: List[T], ys: List[T]): List[T] = 
+    (xs, ys) match
+      case (Nil, _) => ys
+      case (_, Nil) => xs
+      case(x :: xs1, y :: ys1) =>
+        if ord.lt(x, y) then x :: merge(xs1, ys)
+        else y :: merge(xs, ys1)
+
+  val n = xs.length / 2
+  if n == 0 then xs
+  else
+    val (ys, zs) = xs.splitAt(n)
+    merge(msort(ys), msort(zs))
+
+
+/* so this method can take anything that has a given instance of Ordering[T].
+this set of types already contains Int and String, and we have this other type Hope[+T]
+that is also part of the typeclass because it has a given for Ordering[Hope[+T]], so Hope[String]
+or HOpe[Int] or even Hope[Hope[Int]] out to any level of nesting will technically work.lazy val 
+
+and now the book, after giving all of those examples, give the most concise explanation of what we've 
+covered, 
+
+  In summary, typeclasses address the problem that it is difficult, inconvenient, or impossible to jam all services involving a type
+  into the class hierarchy of that type. in practice, not everything with which you want to perform a general service can implement an interface that
+  brings it into a common hierarchy. the typeclass approach allows you to instead use a second, separate hierarchy focused just on 
+  providing the service.
+
+typeclasses are really important also, so there are tese things called context bounds that are like a syntactic sugar for
+  typecalsses.
+
+  */
+
+  // first without context bounds
+def maxList[T](elements: List[T])
+    (using ordering: Ordering[T]): T = 
+      elements match
+        case List() =>
+          throw new IllegalArgumentException("Empty list!")
+        case List(x) => x
+        case x :: rest =>
+          val maxRest = maxList(rest)(using ordering)
+          if ordering.gt(x, maxRest) then x
+          else maxRest
+
+// ok, but we didn't need to provide that using declaration the second time, teh compiler knows it is comeing 
+// elements have to be provided, so we will know the type of T, and we can check for givens there
+
+// rewrite with context bounds taken into account
+
+def maxListBetter[T](elements: List[T])
+  (using ordering: Ordering[T]): T =
+    elements match
+      case List() =>
+        throw new IllegalArgumentException("empty LIst!")
+      case List(x) => x
+      case x :: rest =>
+        val maxRest = maxList(rest) // no (using ordering) here
+        if ordering.gt(x, maxRest) then x
+        else maxRest
+    
+
+maxListBetter(List(1, 2, 3))   
+
+// taking t his even further, that other usage of the name ordering, 
+// if ordering.gt(x, maxRest) then x
+// well instead of ordering there we coudl use this std lib function: 
+// def summon[T](using t: T) = t
+// which is more or less exploiting the same compiler trick of leaving the parameter out and letting the 
+// compiler search for a given instance of the context param. It wraps the typeclasse's type in another type T
+// so that the compiler will be encouraged to just find that type and a user can reference the type with summon 
+// instead of having to name the context parameter. 
+// this is used enough in scala that the compiler knows the name can be optional and so it lets you just reference the 
+// context bound of the type. ok so a context bound looks more like a type being applied to a type parameter tha tis declared
+// at the front of the method instead of as a paramete rin the parameter list. here is the example for this function
+
+def maxListBest[T: Ordering](elements: List[T]): T = 
+  elements match
+    case List() => throw new IllegalArgumentException("empty list!")
+    case List(x) => x
+    case x :: rest => 
+      val maxRest = maxList(rest)
+      if summon[Ordering[T]].gt(x, maxRest) then x
+      else maxRest
+
+ maxListBest(List(5, 3, 2)) 
