@@ -74,7 +74,13 @@ val errmsg =
 
     println(msg)
 
-
+/* some closing words about this, this is a good choice for command line argument parsers for main methods because yo don't really
+need to have a command line argument parser for every type, and the types are really not that related, they don't have to be 
+anyway. command line arguments can be any type. the existing parser definition in the standard library defines given instances
+for all of the basic types from scala, so it makes senseyou would want to extend this to include other typs that you define 
+later tha tthe standard library authors don't know about. cool. I should think about typeclasses and their usefullness in this context
+when I'm looking at the typelevel code.lazy val 
+*/
 
 
 
