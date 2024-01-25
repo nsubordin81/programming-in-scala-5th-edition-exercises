@@ -70,5 +70,33 @@ true.toJson
 // you have to mix it in. so what you can do is wrap an extension method in a singleton object and that will make it 
 // easier to bring in.
 
+/* ok so we figured out how to serialize the basic types that json uses, but what if we need to break down more complex 
+custom scala objects and serialize them as json? let's look at an example there
+*/
 
+case class Address(
+    street: String,
+    city: String,
+    state: String,
+    zip: Int)
 
+case class Phone(
+    countryCode: Int,
+    phoneNumber: Long
+)
+
+case class Contact(
+    name: String,
+    addresses: List[Address],
+    phones: List[Phone]
+)
+
+case class AddressBook(contacts: List[Contact])
+
+// so here are some custom serializers defined in companion objects, 
+// notice how we rename the mextension method to 'asJson' from 'toJson'. 
+// this is because we will already be inheriting the toJson extension method from the JsonSerializer trait
+
+object Address:
+    given addressSerializer: JsonSerializer[Address] with
+    def serialize(a: Address) = ???
