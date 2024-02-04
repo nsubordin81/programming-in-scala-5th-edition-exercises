@@ -99,4 +99,19 @@ case class AddressBook(contacts: List[Contact])
 
 object Address:
     given addressSerializer: JsonSerializer[Address] with
-    def serialize(a: Address) = ???
+        def serialize(a: Address) = 
+            import ToJsonMethods.{toJson as asJson}
+            s"""|{
+                |   "street": ${a.street.asJson},
+                |   "city": ${a.city.asJson},
+                |   "state": ${a.state.asJson},
+                |   "zip": ${a.zip.asJson}
+                |}""".stripMargin
+object Phone:
+    given phoneSerializer: JsonSerializer[Phone] with
+                def serialize(p: Phone) =
+                    import ToJsonMethods.{toJson as asJson}
+                    s"""|{
+                        |   "countryCode": ${p.countryCode.asJson},
+                        |   "phoneNumber": ${p.phoneNumber.asJson}
+                        |}""".stripMargin
