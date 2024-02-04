@@ -97,21 +97,42 @@ case class AddressBook(contacts: List[Contact])
 // notice how we rename the mextension method to 'asJson' from 'toJson'. 
 // this is because we will already be inheriting the toJson extension method from the JsonSerializer trait
 
+// TODO something about the below object definitions was causing the memory usage to spike adn vscode was killing the window. not sure what was happening
+// I should look into it
+
+// object Address:
+//     given addressSerializer: JsonSerializer[Address] with
+//         def serialize(a: Address) = 
+//             import ToJsonMethods.{toJson as asJson}
+//             s"""|{
+//                 |   "street": ${a.street.asJson},
+//                 |   "city": ${a.city.asJson},
+//                 |   "state": ${a.state.asJson},
+//                 |   "zip": ${a.zip.asJson}
+//                 |}""".stripMargin
+// object Phone:
+//     given phoneSerializer: JsonSerializer[Phone] with
+// WOW I THINK THE WHOLE PROBLEM WAS INDENTATION RIGHT HERE. OOF!
+//                 def serialize(p: Phone) =
+//                     import ToJsonMethods.{toJson as asJson}
+//                     s"""|{
+//                         |   "countryCode": ${p.countryCode.asJson},
+//                         |   "phoneNumber": ${p.phoneNumber.asJson}
+//                         |}""".stripMargin
+
 object Address:
     given addressSerializer: JsonSerializer[Address] with
-        def serialize(a: Address) = 
+        def serialize(a:Address) = 
             import ToJsonMethods.{toJson as asJson}
             s"""|{
-                |   "street": ${a.street.asJson},
-                |   "city": ${a.city.asJson},
-                |   "state": ${a.state.asJson},
-                |   "zip": ${a.zip.asJson}
+                |   "street": ${a.street.asJson}, 
+                |   "city": ${a.city.asJson}, 
+                |   "state": ${a.state.asJson}, 
+                |   "zip": ${a.zip.asJson} 
                 |}""".stripMargin
-object Phone:
-    given phoneSerializer: JsonSerializer[Phone] with
-                def serialize(p: Phone) =
-                    import ToJsonMethods.{toJson as asJson}
-                    s"""|{
-                        |   "countryCode": ${p.countryCode.asJson},
-                        |   "phoneNumber": ${p.phoneNumber.asJson}
-                        |}""".stripMargin
+
+ object Phone:
+     given phoneSerializer: JsonSerializer[Phone] with
+         def serialize(p: Phone) = 
+             import ToJsonMethods.{toJson as asJson}
+             s"""|{"countryCode": ${p.countryCode.asJson}, {"phoneNumber": ${p.phoneNumber.asJson} }""".stripMargin 
