@@ -112,21 +112,14 @@ object Address:
                 |}""".stripMargin
 
  object Phone:
+    // ok I think the problem that was eating all the memory, was, get this, an extra space before the start of this next line
+    // I wasn't able to figure out until I ran Metals:Run Doctor from the command prompt and that revealed a bunch of compiler errors on various files. 
+    // one of those errors was that the given instance didn't fall positionally inside of the bounds of the parent object. I think that was the issue because
+    // once I uncommented a ducplicated version of the problem below I was able to reproduce the problem. 
     given phoneSerializer: JsonSerializer[Phone] with
         def serialize(p: Phone) = 
             import ToJsonMethods.{toJson as asJson}
-                // s"""|   wow
-                //     |   this rocks.""".stripMargin
               s"""|{
                   |  "countryCode": ${p.countryCode.asJson},
                   |  "phoneNumber": ${p.phoneNumber.asJson}
                   |}""".stripMargin 
-
-//  object Phone:
-//      given phoneSerializer: JsonSerializer[Phone] with
-//          def serialize(p: Phone) = 
-//              import ToJsonMethods.{toJson as asJson}
-//              s"""|{
-//                  |  "countryCode": ${p.countryCode.asJson}, 
-//                  |  "phoneNumber": ${p.phoneNumber.asJson} 
-//                  |}""".stripMargin 
