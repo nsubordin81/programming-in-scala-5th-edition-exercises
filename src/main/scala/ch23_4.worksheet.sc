@@ -112,13 +112,14 @@ object Address:
                 |}""".stripMargin
 
  object Phone:
-     given phoneSerializer: JsonSerializer[Phone] with
+    given phoneSerializer: JsonSerializer[Phone] with
         def serialize(p: Phone) = 
             import ToJsonMethods.{toJson as asJson}
                 // s"""|   wow
                 //     |   this rocks.""".stripMargin
               s"""|{
-                  |  "countryCode": ${p.countryCode.asJson}
+                  |  "countryCode": ${p.countryCode.asJson},
+                  |  "phoneNumber": ${p.phoneNumber.asJson}
                   |}""".stripMargin 
 
 //  object Phone:
