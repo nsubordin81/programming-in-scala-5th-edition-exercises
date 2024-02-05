@@ -49,6 +49,9 @@ object JsonSerializer:
         def serialize(n: Long) = n.toString
     given booleanSerializer: JsonSerializer[Boolean] with
         def serialize(b: Boolean) = b.toString
+    given listSerializer[T](using JsonSerializer[T]): JsonSerializer[List[T]] with
+        def serialize(ts: List[T]) =
+            s"[${ts.map(t => t.toJson).mkString(", ")}]"
 
 object ToJsonMethods:
     // invokes on jser when this extension method is found
@@ -123,3 +126,14 @@ object Address:
                   |  "countryCode": ${p.countryCode.asJson},
                   |  "phoneNumber": ${p.phoneNumber.asJson}
                   |}""".stripMargin 
+
+// this is showcasing that we can have an extension method toJson added to the List class
+// that can serialize json strings from any type that also supports json serialization
+// so it involves type classes and context parameters. 
+// type classes for the LIst and other types that are given the 'serialize' method
+// even though many of them are closed to modificaiton at this point, and 
+// extension methods to make it look like the serialize method was efined on the same interface
+// within each of these classes and exposed a toJson utility method. some nested typeclass stuff
+// going on with list, because list is using the typeclass of serialize to accept another member of the 
+// set of types within the json serializer typeclass in order to do its job. 
+List(1, 2, 3).toJson
