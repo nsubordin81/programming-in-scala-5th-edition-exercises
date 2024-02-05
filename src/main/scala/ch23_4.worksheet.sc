@@ -135,4 +135,7 @@ object Address:
      given phoneSerializer: JsonSerializer[Phone] with
          def serialize(p: Phone) = 
              import ToJsonMethods.{toJson as asJson}
-             s"""|{"countryCode": ${p.countryCode.asJson}, {"phoneNumber": ${p.phoneNumber.asJson} }""".stripMargin 
+             s"""|{
+                 |  "countryCode": ${p.countryCode.asJson}, 
+                 |  "phoneNumber": ${p.phoneNumber.asJson} 
+                 |}""".stripMargin 
