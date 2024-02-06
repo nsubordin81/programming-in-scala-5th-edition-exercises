@@ -51,6 +51,8 @@ object JsonSerializer:
         def serialize(b: Boolean) = b.toString
     given listSerializer[T](using JsonSerializer[T]): JsonSerializer[List[T]] with
         def serialize(ts: List[T]) =
+            // interesting note here, because 't' is part of List[T], and there was a given instance of JsonSerializer[T] delcared with 'using' context param,
+            // we have access to the extension method declared above in this object, the toJson one.
             s"[${ts.map(t => t.toJson).mkString(", ")}]"
 
 object ToJsonMethods:
@@ -137,3 +139,102 @@ object Address:
 // going on with list, because list is using the typeclass of serialize to accept another member of the 
 // set of types within the json serializer typeclass in order to do its job. 
 List(1, 2, 3).toJson
+
+// List(1.0, 2.0, 3.0).toJson
+// the above will fail to compile with: 
+// value toJson is not a member of List[Double].
+// An extension method was tried, but could not be fully constructed:
+
+//     this.ToJsonMethods.toJson[List[Double]](
+//       List.apply[Double]([1.0d,2.0d,3.0d : Double]*))(
+//       this.JsonSerializer.listSerializer[Double](
+//         /* missing */summon[MdocApp.this.JsonSerializer[Double]])
+//     )
+
+//     failed with:
+
+//         No given instance of type MdocApp.this.JsonSerializer[List[Double]] was found for parameter jser of method toJson in object ToJsonMethods.
+//         I found:
+        
+//             this.JsonSerializer.listSerializer[Double](
+//               /* missing */summon[MdocApp.this.JsonSerializer[Double]])
+        
+//         But no implicit values were found that match type MdocApp.this.JsonSerializer[Double].mdoc
+
+
+// this happens because there was no given instance for JsonSerializer[List[Double]] because there is no JsonSerializer[Double] 
+// so there were no implicit values provided, no given instances of JsonSerializer[Double] were defined
+
+
+// so there is a huge benefit here of typeclasses. at compile time, you can check that every type that is part of your new custom object
+// supports the json serialization functionality required to convert the object to json. 
+
+// we are now seeing the general usefulness of typeclasses through a use case of their most common benefit. you ahve several types that
+// are otherwise unrelated (int, double, long, List[T], AddressBook, etc.), and you want them all to be able to do something new (serialize)
+// but you don't have the ability to alter the original classes to add the behavior, and design wise you don't really want that behavior to be considered 
+// something you think about up front (i.e. "oh, I'm making a new object, do I want this to be serializable? let me make sure to add that serialize impl before I ever publish the lib")
+
+//ok, so now we have all of the parts and can make the serializer for contact list
+
+// now we make a companion object for Contact to define the json serializer for it
+object Contact:
+    given contactSerializer: JsonSerializer[Contact] with
+        def serialize(c: Contact) =
+            import ToJsonMethods.{toJson as asJson}
+            s"""|{
+                |   "name": ${c.name.asJson},
+                |   "addresses": ${c.addresses.asJson},
+                |   "phones": ${c.phones.asJson}
+                |}""".stripMargin
+
+object AddressBook:
+    given addressBookSerializer: JsonSerializer[AddressBook] with
+        def serialize(ab: AddressBook) =
+            import ToJsonMethods.{toJson as asJson}
+            s"""|{
+                |   "contacts": ${ab.contacts.asJson}
+            }""".stripMargin
+
+
+val addressBook =
+    AddressBook(
+        List(
+            Contact(
+                "Bob Smith",
+                List(
+                    Address(
+                        "12345 Main Street",
+                        "San Francisco",
+                        "CA",
+                        94105
+                    ),
+                    Address(
+                        "500 State Street",
+                        "Los Angeles",
+                        "CA",
+                        90007
+                    )
+                ),
+                List(
+                    Phone(
+                        1,
+                        5558881234l
+                    ),
+                    Phone(
+                        49,
+                        5558413323l
+                    )
+                )
+            )
+        )
+    )
+
+addressBook.toJson
+
+// they go on to explain that thsi is a simplified example and you didn't build a full json serializer for general purpose. 
+// to do that you would need more features, more support for custom classes so you don't have to write so much boilerplate typeclass code. 
+// you would in fact generate the given instances for your throgh typeclass derivation. this is an advanced topic. 
+
+// context bounds, review these because they are a sugar over typeclasses and I forget already how to do it the long hand way. 
+
+// and that's it for chapter 23!!
